@@ -1,15 +1,15 @@
 package com.drt2009.todo.controller;
 
 
+import com.drt2009.todo.pojo.TodoItem;
 import com.flagsmith.FlagsmithClient;
 import com.flagsmith.exceptions.FlagsmithClientError;
 import com.flagsmith.models.Flags;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.server.ResponseStatusException;
 
 @RestController
 @RequestMapping("/todo")
@@ -19,15 +19,13 @@ public class TodoController {
   private final FlagsmithClient flagsmithClient;
 
   @PostMapping()
-  public String createTodoItem() throws FlagsmithClientError {
+  public ResponseEntity<Void> createTodoItem(TodoItem todoItem) throws FlagsmithClientError {
     Flags flags = flagsmithClient.getEnvironmentFlags();
     boolean isFeatureTurnedOn = flags.isFeatureEnabled("create_todo_item");
 
     if(isFeatureTurnedOn)
-      return "Hello World";
+      return ResponseEntity.status(201).build();
     else
-      throw new ResponseStatusException(
-          HttpStatus.NOT_FOUND
-      );
+      return ResponseEntity.notFound().build();
   }
 }
