@@ -1,10 +1,10 @@
-package com.drt2009.todoApp;
+package com.drt2009.todo;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-class TodoAppApplicationTests {
+class TodoApplicationTests {
 
 	@Test
 	void contextLoads() {
