@@ -8,6 +8,7 @@ import org.junit.platform.suite.api.SelectClasspathResource;
 import org.junit.platform.suite.api.Suite;
 import org.springframework.test.context.ContextConfiguration;
 
+@SuppressWarnings("java:S2187")
 @Suite
 @IncludeEngines("cucumber")
 @SelectClasspathResource("cucumber")

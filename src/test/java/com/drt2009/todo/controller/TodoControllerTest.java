@@ -4,11 +4,9 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.when;
 
 import com.drt2009.todo.pojo.TodoItem;
+import com.drt2009.todo.service.TodoService;
 import com.flagsmith.FlagsmithClient;
-import com.flagsmith.exceptions.FlagsmithClientError;
 import com.flagsmith.models.Flags;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -22,6 +20,8 @@ class TodoControllerTest {
 
   @Mock
   private FlagsmithClient flagsmithClient;
+  @Mock
+  private TodoService todoService;
 
   @InjectMocks
   private TodoController todoController;
@@ -32,13 +32,15 @@ class TodoControllerTest {
 
   @Test
   void createTodoItem_Success() throws Exception {
+    TodoItem input = TodoItem.builder().description("testDescription").build();
+
     when(flagsmithClient.getEnvironmentFlags()).thenReturn(flags);
     when(flags.isFeatureEnabled("create_todo_item")).thenReturn(true);
+    when(todoService.createTodoItem(input)).thenReturn(TodoItem.builder().description("testDescription").id(1).build());
 
-    ResponseEntity<Void> actualResponse = todoController.createTodoItem(
-        TodoItem.builder().build());
+    ResponseEntity<TodoItem> actualResponse = todoController.createTodoItem(input);
 
-    assertEquals(actualResponse.getStatusCode(), HttpStatusCode.valueOf(201));
+    assertEquals(actualResponse.getStatusCode(), HttpStatusCode.valueOf(200));
   }
 
   @Test
@@ -46,7 +48,7 @@ class TodoControllerTest {
     when(flagsmithClient.getEnvironmentFlags()).thenReturn(flags);
     when(flags.isFeatureEnabled("create_todo_item")).thenReturn(false);
 
-    ResponseEntity<Void> actualResponse = todoController.createTodoItem(
+    ResponseEntity<TodoItem> actualResponse = todoController.createTodoItem(
         TodoItem.builder().build());
 
     assertEquals(actualResponse.getStatusCode(), HttpStatusCode.valueOf(404));

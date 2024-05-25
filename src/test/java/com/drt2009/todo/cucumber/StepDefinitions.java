@@ -2,6 +2,7 @@ package com.drt2009.todo.cucumber;
 
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.Mockito.when;
 
 import com.drt2009.todo.controller.TodoController;
@@ -14,33 +15,33 @@ import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import io.cucumber.spring.CucumberContextConfiguration;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.boot.test.mock.mockito.SpyBean;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 
-@ExtendWith(MockitoExtension.class)
+@ExtendWith(SpringExtension.class)
 @CucumberContextConfiguration
 @SpringBootTest(classes = SpringTestConfig.class)
 public class StepDefinitions {
 
   //Mocks
-  @Mock
+  @MockBean
   private FlagsmithClient flagsmithClient;
 
-  @InjectMocks
+  @SpyBean
   private TodoController todoController;
 
   private TodoItem todoItem;
-  private ResponseEntity response;
+  private ResponseEntity<TodoItem> todoResponse;
 
   @Given("I have a todo item to submit")
   public void iHaveATodoItemToSubmit() {
-    todoItem = TodoItem.builder().build();
+    todoItem = TodoItem.builder().description("Test Todo Item Cucumber").build();
   }
   @Given("the feature flag for {string} is turned on")
   public void theFeatureFlagIsTurnedOn(String featureName) throws Exception {
@@ -50,11 +51,17 @@ public class StepDefinitions {
   }
   @When("I submit the item to the controller")
   public void iSubmitTheItemToTheController() throws Exception {
-    response = todoController.createTodoItem(todoItem);
+    todoResponse = todoController.createTodoItem(todoItem);
   }
-  @Then("a created response is returned")
-  public void aCreatedResponseIsReturned() {
-    assertEquals(response.getStatusCode(),HttpStatusCode.valueOf(201));
+
+  @Then("a {int} response is returned")
+  public void a_response_is_returned(Integer statusCode) {
+    assertEquals(todoResponse.getStatusCode(),HttpStatusCode.valueOf(statusCode));
+  }
+  @Then("a todo item is returned with an id")
+  public void a_todo_item_is_returned() {
+    assertNotNull(todoResponse.getBody().getId());
+    assertEquals("Test Todo Item Cucumber",todoResponse.getBody().getDescription());
   }
 
 }
