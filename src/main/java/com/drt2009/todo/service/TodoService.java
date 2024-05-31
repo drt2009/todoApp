@@ -7,4 +7,6 @@ import org.springframework.stereotype.Component;
 public interface TodoService {
 
   TodoItem createTodoItem(TodoItem todoItem);
+
+  TodoItem getTodoItem(int id);
 }

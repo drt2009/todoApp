@@ -10,7 +10,10 @@ import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
+//Needed for JPA findById
+@NoArgsConstructor
 @Entity
 @Getter
 @AllArgsConstructor(access = AccessLevel.PRIVATE)

@@ -6,3 +6,12 @@ Feature: Todo Item
     When I submit the item to the controller
     Then a 200 response is returned
     And a todo item is returned with an id
+    And clean up after test
+
+  Scenario: Create a todo item
+    Given There is a todo item already created
+    And the feature flag for "get_todo_item" is turned on
+    When I request the todo item
+    Then a 200 response is returned
+    And a todo item is returned with that id
+    And clean up after test

@@ -9,6 +9,7 @@ import com.drt2009.todo.controller.TodoController;
 import com.drt2009.todo.pojo.TodoItem;
 import com.flagsmith.FlagsmithClient;
 
+import com.flagsmith.exceptions.FlagsmithClientError;
 import com.flagsmith.models.Flags;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
@@ -38,12 +39,12 @@ public class StepDefinitions {
   @SpyBean
   private TodoController todoController;
 
-  private TodoItem todoItem;
   private ResponseEntity<TodoItem> todoResponse;
+  private TodoItem expectedTodoItem;
 
   @Given("I have a todo item to submit")
   public void iHaveATodoItemToSubmit() {
-    todoItem = TodoItem.builder().description("Test Todo Item Cucumber").build();
+    TodoItem.builder().description("Test Todo Item Cucumber").build();
   }
   @Given("the feature flag for {string} is turned on")
   public void theFeatureFlagIsTurnedOn(String featureName) throws Exception {
@@ -51,9 +52,22 @@ public class StepDefinitions {
     when(flagsmithClient.getEnvironmentFlags()).thenReturn(flags);
     when(flags.isFeatureEnabled(featureName)).thenReturn(true);
   }
+  @Given("There is a todo item already created")
+  public void there_is_a_todo_item_already_created() throws Exception {
+    theFeatureFlagIsTurnedOn("create_todo_item");
+    expectedTodoItem = iSubmitTheItemToTheController().getBody();
+    //Clear out the response from the create call
+    todoResponse = null;
+  }
+
   @When("I submit the item to the controller")
-  public void iSubmitTheItemToTheController() throws Exception {
-    todoResponse = todoController.createTodoItem(todoItem);
+  public ResponseEntity<TodoItem> iSubmitTheItemToTheController() throws Exception {
+    todoResponse = todoController.createTodoItem(TodoItem.builder().description("Test Todo Item Cucumber").build());
+    return todoResponse;
+  }
+  @When("I request the todo item")
+  public void i_request_the_todo_item() throws Exception {
+    todoResponse = todoController.getTodoItem(todoResponse.getBody().getId());
   }
 
   @Then("a {int} response is returned")
@@ -65,5 +79,16 @@ public class StepDefinitions {
     assertNotNull(todoResponse.getBody().getId());
     assertEquals("Test Todo Item Cucumber",todoResponse.getBody().getDescription());
   }
+  @Then("a todo item is returned with that id")
+  public void a_todo_item_is_returned_with_that_id() {
+    assertEquals(expectedTodoItem,todoResponse.getBody());
+  }
+
+  @Then("clean up after test")
+  public void clean_up_after_test() {
+    todoResponse= null;
+    expectedTodoItem = null;
+  }
+
 
 }
