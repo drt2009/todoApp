@@ -14,5 +14,6 @@ import org.springframework.test.context.ContextConfiguration;
 @SelectClasspathResource("cucumber")
 @ConfigurationParameter(key = PLUGIN_PROPERTY_NAME, value = "pretty")
 @ContextConfiguration( classes = SpringTestConfig.class)
+
 public class RunCucumberTest {
 }

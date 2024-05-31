@@ -21,12 +21,14 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.test.mock.mockito.SpyBean;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 
 @ExtendWith(SpringExtension.class)
 @CucumberContextConfiguration
 @SpringBootTest(classes = SpringTestConfig.class)
+@ActiveProfiles("bdd")
 public class StepDefinitions {
 
   //Mocks
