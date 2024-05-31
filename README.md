@@ -8,7 +8,7 @@ A spring boot backend for a todo item/list web app
 
 Coming soon &trade;
 
-## Frameworks
+## Frameworks/Tools/Libraries
 * Spring Boot 
 * Cucumber
 * Postgres
