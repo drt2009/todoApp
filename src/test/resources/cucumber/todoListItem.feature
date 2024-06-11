@@ -8,10 +8,19 @@ Feature: Todo Item
     And a todo item is returned with an id
     And clean up after test
 
-  Scenario: Create a todo item
+  Scenario: Get a todo item
     Given There is a todo item already created
     And the feature flag for "get_todo_item" is turned on
     When I request the todo item
     Then a 200 response is returned
     And a todo item is returned with that id
+    And clean up after test
+
+  Scenario: Get All Todo
+    Given There is a todo item already created
+    And There is a todo item already created
+    And the feature flag for "get_all_todo_items" is turned on
+    When I request the todo item
+    Then a 200 response is returned
+    And atleast 2 todo items are returned
     And clean up after test
