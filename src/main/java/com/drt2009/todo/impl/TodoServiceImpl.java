@@ -36,8 +36,6 @@ public class TodoServiceImpl implements TodoService {
   public List<TodoItem> getAllTodoItems() {
     List<Item> itemList = Streamable.of(itemsRepo.findAll()).toList();
 
-    List<TodoItem> todoItemList = itemList.stream().map(Item::convertToTodoItem).toList();
-
-    return todoItemList;
+    return itemList.stream().map(Item::convertToTodoItem).toList();
   }
 }

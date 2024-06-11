@@ -9,8 +9,6 @@ import static org.mockito.Mockito.when;
 import com.drt2009.todo.controller.TodoController;
 import com.drt2009.todo.pojo.TodoItem;
 import com.flagsmith.FlagsmithClient;
-
-import com.flagsmith.exceptions.FlagsmithClientError;
 import com.flagsmith.models.Flags;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
