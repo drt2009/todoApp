@@ -3,6 +3,7 @@ package com.drt2009.todo.cucumber;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.when;
 
 import com.drt2009.todo.controller.TodoController;
@@ -15,6 +16,7 @@ import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import io.cucumber.spring.CucumberContextConfiguration;
+import java.util.List;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mockito;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -40,6 +42,7 @@ public class StepDefinitions {
   private TodoController todoController;
 
   private ResponseEntity<TodoItem> todoResponse;
+  private ResponseEntity<List<TodoItem>> todoListResponse;
   private TodoItem expectedTodoItem;
 
   @Given("I have a todo item to submit")
@@ -53,11 +56,10 @@ public class StepDefinitions {
     when(flags.isFeatureEnabled(featureName)).thenReturn(true);
   }
   @Given("There is a todo item already created")
-  public void there_is_a_todo_item_already_created() throws Exception {
+  public void thereIsATodoItemAlreadyCreated() throws Exception {
     theFeatureFlagIsTurnedOn("create_todo_item");
     expectedTodoItem = iSubmitTheItemToTheController().getBody();
-    //Clear out the response from the create call
-    todoResponse = null;
+
   }
 
   @When("I submit the item to the controller")
@@ -66,29 +68,40 @@ public class StepDefinitions {
     return todoResponse;
   }
   @When("I request the todo item")
-  public void i_request_the_todo_item() throws Exception {
+  public void iRequestTheTodoItem() throws Exception {
     todoResponse = todoController.getTodoItem(todoResponse.getBody().getId());
   }
 
+  @When("I request to get all of the todo items")
+  public void iRequestToGetAllOfTheTodoItems() throws Exception {
+    todoListResponse =  todoController.getAllTodoItems();
+  }
+
   @Then("a {int} response is returned")
-  public void a_response_is_returned(Integer statusCode) {
+  public void aResponseIsReturned(Integer statusCode) {
     assertEquals(todoResponse.getStatusCode(),HttpStatusCode.valueOf(statusCode));
   }
   @Then("a todo item is returned with an id")
-  public void a_todo_item_is_returned() {
+  public void aTodoItemIsReturned() {
     assertNotNull(todoResponse.getBody().getId());
     assertEquals("Test Todo Item Cucumber",todoResponse.getBody().getDescription());
   }
   @Then("a todo item is returned with that id")
-  public void a_todo_item_is_returned_with_that_id() {
+  public void aTodoItemIsReturnedWithThatId() {
     assertEquals(expectedTodoItem,todoResponse.getBody());
   }
 
-  @Then("clean up after test")
-  public void clean_up_after_test() {
-    todoResponse= null;
-    expectedTodoItem = null;
+
+  @Then("at least {int} todo items are returned")
+  public void atleastTodoItemsAreReturned(Integer numberOfExpectedItems) {
+    assertTrue(numberOfExpectedItems <= todoListResponse.getBody().size());
   }
 
+
+  @Then("clean up after test")
+  public void cleanUpAfterTest() {
+    todoResponse = null;
+    expectedTodoItem = null;
+  }
 
 }

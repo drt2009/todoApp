@@ -7,6 +7,7 @@ import com.drt2009.todo.pojo.TodoItem;
 import com.drt2009.todo.service.TodoService;
 import com.flagsmith.FlagsmithClient;
 import com.flagsmith.models.Flags;
+import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -76,6 +77,32 @@ class TodoControllerTest {
     when(flags.isFeatureEnabled("get_todo_item")).thenReturn(false);
 
     ResponseEntity<TodoItem> actualResponse = todoController.getTodoItem(1);
+
+    assertEquals( HttpStatusCode.valueOf(404),actualResponse.getStatusCode());
+  }
+
+  @Test
+  void getAllTodoItems_Success() throws Exception {
+    TodoItem expected1 = TodoItem.builder().description("testDescription").id(1).build();
+    TodoItem expected2 = TodoItem.builder().description("testDescription2").id(2).build();
+    List<TodoItem> expectedList = List.of(expected1,expected2);
+
+    when(flagsmithClient.getEnvironmentFlags()).thenReturn(flags);
+    when(flags.isFeatureEnabled("get_all_todo_items")).thenReturn(true);
+    when(todoService.getAllTodoItems()).thenReturn(List.of(expected1,expected2));
+
+    ResponseEntity<List<TodoItem>> actualResponse = todoController.getAllTodoItems();
+
+    assertEquals( HttpStatusCode.valueOf(200), actualResponse.getStatusCode());
+    assertEquals(expectedList,actualResponse.getBody());
+  }
+
+  @Test
+  void getAllTodoItems_FeatureTurnedOff() throws Exception {
+    when(flagsmithClient.getEnvironmentFlags()).thenReturn(flags);
+    when(flags.isFeatureEnabled("get_all_todo_items")).thenReturn(false);
+
+    ResponseEntity<List<TodoItem>> actualResponse = todoController.getAllTodoItems();
 
     assertEquals( HttpStatusCode.valueOf(404),actualResponse.getStatusCode());
   }

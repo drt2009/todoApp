@@ -20,7 +20,7 @@ Feature: Todo Item
     Given There is a todo item already created
     And There is a todo item already created
     And the feature flag for "get_all_todo_items" is turned on
-    When I request the todo item
+    When I request to get all of the todo items
     Then a 200 response is returned
-    And atleast 2 todo items are returned
+    And at least 2 todo items are returned
     And clean up after test

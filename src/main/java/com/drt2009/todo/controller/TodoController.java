@@ -6,6 +6,7 @@ import com.drt2009.todo.service.TodoService;
 import com.flagsmith.FlagsmithClient;
 import com.flagsmith.exceptions.FlagsmithClientError;
 import com.flagsmith.models.Flags;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -23,6 +24,21 @@ public class TodoController {
 
   private final FlagsmithClient flagsmithClient;
   private final TodoService todoService;
+
+
+  @GetMapping()
+  public ResponseEntity<List<TodoItem>> getAllTodoItems() throws FlagsmithClientError {
+    Flags flags = flagsmithClient.getEnvironmentFlags();
+    boolean isFeatureTurnedOn = flags.isFeatureEnabled("get_all_todo_items");
+
+    if(isFeatureTurnedOn) {
+      List<TodoItem> responseTodoItem = todoService.getAllTodoItems();
+      return ResponseEntity.ok(responseTodoItem);
+    }
+    else {
+      return ResponseEntity.notFound().build();
+    }
+  }
 
   @PostMapping()
   public ResponseEntity<TodoItem> createTodoItem(TodoItem todoItem) throws FlagsmithClientError {
@@ -51,4 +67,5 @@ public class TodoController {
       return ResponseEntity.notFound().build();
     }
   }
+
 }

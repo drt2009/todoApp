@@ -9,6 +9,7 @@ import com.drt2009.todo.impl.TodoServiceImpl;
 import com.drt2009.todo.pojo.TodoItem;
 import com.drt2009.todo.repository.ItemsRepo;
 import com.drt2009.todo.repository.models.Item;
+import java.util.List;
 import java.util.Optional;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -58,5 +59,21 @@ class TodoServiceTest {
 
   }
 
+  @Test
+  void getAllTodoItems_happyPath(){
+    TodoItem expected1 = TodoItem.builder().id(1).description("Test Todo Item").build();
+    TodoItem expected2 = TodoItem.builder().id(2).description("Test Todo Item 2").build();
+    List<TodoItem> expected = List.of(expected1,expected2);
+
+    Item returnItem1  = Item.builder().id(1).description("Test Todo Item").build();
+    Item returnItem2  = Item.builder().id(2).description("Test Todo Item 2").build();
+    List<Item> returnList = List.of(returnItem1,returnItem2);
+
+    when(itemsRepo.findAll()).thenReturn(returnList);
+
+    List<TodoItem> actual = todoService.getAllTodoItems();
+
+    assertEquals(expected,actual);
+  }
 
 }
