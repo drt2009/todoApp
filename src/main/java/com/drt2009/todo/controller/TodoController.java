@@ -64,6 +64,7 @@ public class TodoController {
   public ResponseEntity<TodoItem> updateTodoStatus(@PathVariable int id,
       @PathVariable Boolean status) {
     if (isFeatureTurnedOn("update_todo_complete_status")) {
+      log.info("Updating Status");
       TodoItem responseTodoItem = todoService.updateTodoCompleteStatus(id, status);
       return ResponseEntity.ok(responseTodoItem);
     } else {

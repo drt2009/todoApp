@@ -1,6 +1,7 @@
 package com.drt2009.todo.service.impl;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
@@ -20,6 +21,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 @ExtendWith(MockitoExtension.class)
 class TodoServiceTest {
+
   @Mock
   private ItemsRepo itemsRepo;
 
@@ -27,7 +29,7 @@ class TodoServiceTest {
   private TodoServiceImpl todoService;
 
   @Test
-  void createTodoItem_happyPath(){
+  void createTodoItem_happyPath() {
     TodoItem testItem = TodoItem.builder().description("Test Todo Item").build();
     TodoItem expected = TodoItem.builder().id(1).description("Test Todo Item").build();
     Item returnItem = Item.builder().id(1).description("Test Todo Item").build();
@@ -36,65 +38,69 @@ class TodoServiceTest {
 
     TodoItem actual = todoService.createTodoItem(testItem);
 
-    assertEquals(expected,actual);
-  };
+    assertEquals(expected, actual);
+  }
 
   @Test
-  void getTodoItem_happyPath(){
+  void getTodoItem_happyPath() {
     TodoItem expected = TodoItem.builder().id(1).description("Test Todo Item").build();
-    Item returnItem  = Item.builder().id(1).description("Test Todo Item").build();
+    Item returnItem = Item.builder().id(1).description("Test Todo Item").build();
 
     when(itemsRepo.findById(1)).thenReturn(Optional.of(returnItem));
 
     TodoItem actual = todoService.getTodoItem(1);
 
-    assertEquals(expected,actual);
+    assertEquals(expected, actual);
   }
 
   @Test
-  void getTodoItem_itemNotFound(){
+  void getTodoItem_itemNotFound() {
     when(itemsRepo.findById(1)).thenReturn(Optional.empty());
-    ItemNotFoundException exception = assertThrows(ItemNotFoundException.class, ()-> todoService.getTodoItem(1));
+    ItemNotFoundException exception = assertThrows(ItemNotFoundException.class,
+        () -> todoService.getTodoItem(1));
     assertEquals("404 Requested Item Id of 1 was not found", exception.getMessage());
 
   }
 
   @Test
-  void getAllTodoItems_happyPath(){
+  void getAllTodoItems_happyPath() {
     TodoItem expected1 = TodoItem.builder().id(1).description("Test Todo Item").build();
     TodoItem expected2 = TodoItem.builder().id(2).description("Test Todo Item 2").build();
-    List<TodoItem> expected = List.of(expected1,expected2);
+    List<TodoItem> expected = List.of(expected1, expected2);
 
-    Item returnItem1  = Item.builder().id(1).description("Test Todo Item").build();
-    Item returnItem2  = Item.builder().id(2).description("Test Todo Item 2").build();
-    List<Item> returnList = List.of(returnItem1,returnItem2);
+    Item returnItem1 = Item.builder().id(1).description("Test Todo Item").build();
+    Item returnItem2 = Item.builder().id(2).description("Test Todo Item 2").build();
+    List<Item> returnList = List.of(returnItem1, returnItem2);
 
-    when(itemsRepo.findAll()).thenReturn(returnList);
+    when(itemsRepo.findAllByOrderByIdAsc()).thenReturn(returnList);
 
     List<TodoItem> actual = todoService.getAllTodoItems();
 
-    assertEquals(expected,actual);
+    assertEquals(expected, actual);
   }
 
   @Test
-  void updateTodoCompleteStatus_happyPath(){
-    TodoItem expected = TodoItem.builder().id(1).description("Test Todo Item").complete(true).build();
-    Item returnItemFromFind  = Item.builder().id(1).description("Test Todo Item").complete(false).build();
-    Item returnItemFromSave =  Item.builder().id(1).description("Test Todo Item").complete(true).build();
-
+  void updateTodoCompleteStatus_happyPath() {
+    TodoItem expected = TodoItem.builder().id(1).description("Test Todo Item").complete(true)
+        .build();
+    Item returnItemFromFind = Item.builder().id(1).description("Test Todo Item").complete(false)
+        .build();
+    Item returnItemFromSave = Item.builder().id(1).description("Test Todo Item").complete(true)
+        .build();
 
     when(itemsRepo.findById(1)).thenReturn(Optional.of(returnItemFromFind));
     when(itemsRepo.save(returnItemFromSave)).thenReturn(returnItemFromSave);
 
-    TodoItem actual = todoService.updateTodoCompleteStatus(1,true);
+    TodoItem actual = todoService.updateTodoCompleteStatus(1, true);
 
-    assertEquals(expected,actual);
+    assertEquals(expected, actual);
   }
 
   @Test
-  void updateTodoCompleteStatus_itemNotFound(){
+  void updateTodoCompleteStatus_itemNotFound() {
     when(itemsRepo.findById(1)).thenReturn(Optional.empty());
-    ItemNotFoundException exception = assertThrows(ItemNotFoundException.class, ()-> todoService.updateTodoCompleteStatus(1,true));
+    ItemNotFoundException exception = assertThrows(ItemNotFoundException.class,
+        () -> todoService.updateTodoCompleteStatus(1, true));
     assertEquals("404 Requested Item Id of 1 was not found", exception.getMessage());
 
   }

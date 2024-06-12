@@ -8,7 +8,6 @@ import com.drt2009.todo.service.TodoService;
 import java.util.List;
 import java.util.Optional;
 import lombok.AllArgsConstructor;
-import org.springframework.data.util.Streamable;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -34,7 +33,7 @@ public class TodoServiceImpl implements TodoService {
 
   @Override
   public List<TodoItem> getAllTodoItems() {
-    List<Item> itemList = Streamable.of(itemsRepo.findAll()).toList();
+    List<Item> itemList = itemsRepo.findAllByOrderByIdAsc();
 
     return itemList.stream().map(Item::convertToTodoItem).toList();
   }
