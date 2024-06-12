@@ -24,3 +24,12 @@ Feature: Todo Item
     Then a 200 response is returned
     And at least 2 todo items are returned
     And clean up after test
+
+  Scenario: Complete a todo item
+    Given There is a todo item already created
+    And the feature flag for "update_todo_complete_status" is turned on
+    When I complete a todo item
+    Then a 200 response is returned
+    And a todo item is returned with that id
+    And that todo item is in completed status
+    And clean up after test

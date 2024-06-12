@@ -12,4 +12,6 @@ public interface TodoService {
   TodoItem getTodoItem(int id);
 
   List<TodoItem> getAllTodoItems();
+
+  TodoItem updateTodoCompleteStatus(int id, boolean status);
 }

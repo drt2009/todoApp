@@ -27,7 +27,7 @@ public class TodoServiceImpl implements TodoService {
   public TodoItem getTodoItem(int id) {
     Optional<Item> itemOptional = itemsRepo.findById(id);
 
-    Item item = itemOptional.orElseThrow(()->new ItemNotFoundException(id));
+    Item item = itemOptional.orElseThrow(() -> new ItemNotFoundException(id));
 
     return Item.convertToTodoItem(item);
   }
@@ -37,5 +37,14 @@ public class TodoServiceImpl implements TodoService {
     List<Item> itemList = Streamable.of(itemsRepo.findAll()).toList();
 
     return itemList.stream().map(Item::convertToTodoItem).toList();
+  }
+
+  @Override
+  public TodoItem updateTodoCompleteStatus(int id, boolean completionStatus) {
+    Optional<Item> itemOptional = itemsRepo.findById(id);
+    Item item = itemOptional.orElseThrow(() -> new ItemNotFoundException(id));
+    item.setComplete(completionStatus);
+    Item itemAfterSave = itemsRepo.save(item);
+    return Item.convertToTodoItem(itemAfterSave);
   }
 }

@@ -5,9 +5,9 @@ import org.springframework.web.client.HttpClientErrorException;
 
 public class ItemNotFoundException extends HttpClientErrorException {
 
-  public ItemNotFoundException(int itemId){
+  public ItemNotFoundException(int itemId) {
     super(HttpStatusCode.valueOf(404)
-        ,String.format("Requested Item Id of %s was not found",itemId));
+        , String.format("Requested Item Id of %s was not found", itemId));
   }
 
 }

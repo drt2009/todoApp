@@ -76,4 +76,27 @@ class TodoServiceTest {
     assertEquals(expected,actual);
   }
 
+  @Test
+  void updateTodoCompleteStatus_happyPath(){
+    TodoItem expected = TodoItem.builder().id(1).description("Test Todo Item").complete(true).build();
+    Item returnItemFromFind  = Item.builder().id(1).description("Test Todo Item").complete(false).build();
+    Item returnItemFromSave =  Item.builder().id(1).description("Test Todo Item").complete(true).build();
+
+
+    when(itemsRepo.findById(1)).thenReturn(Optional.of(returnItemFromFind));
+    when(itemsRepo.save(returnItemFromSave)).thenReturn(returnItemFromSave);
+
+    TodoItem actual = todoService.updateTodoCompleteStatus(1,true);
+
+    assertEquals(expected,actual);
+  }
+
+  @Test
+  void updateTodoCompleteStatus_itemNotFound(){
+    when(itemsRepo.findById(1)).thenReturn(Optional.empty());
+    ItemNotFoundException exception = assertThrows(ItemNotFoundException.class, ()-> todoService.updateTodoCompleteStatus(1,true));
+    assertEquals("404 Requested Item Id of 1 was not found", exception.getMessage());
+
+  }
+
 }

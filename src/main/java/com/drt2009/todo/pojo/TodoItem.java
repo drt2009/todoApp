@@ -12,7 +12,9 @@ import lombok.ToString;
 @ToString
 @Getter
 public class TodoItem {
+
   private Integer id;
   private String description;
+  private boolean complete;
 
 }
